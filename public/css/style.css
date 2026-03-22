@@ -1,0 +1,25 @@
+#addCard .card {
+  background-color: #e7f1ff; 
+}
+
+/* User List card background */
+#listCard .card {
+  background-color: #ec7b79; 
+}
+
+/* Headings */
+.add-title {
+  background-color: #ec7b79;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.list-title {
+  background-color: #ec7b79; 
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+
