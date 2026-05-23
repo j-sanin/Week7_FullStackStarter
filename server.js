@@ -7,14 +7,27 @@ require("dotenv").config();
 const usersRouter = require("./routes/users");
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
-const authRoutes = require("./routes/authRoutes");  // ADD THIS
+const authRoutes = require("./routes/authRoutes");
 const { setServers } = require("dns");   //added
 
 const app = express();
 
-// Body parsers (required so req.body will not be undefined)
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Lab Challenge routes (BEFORE static files)
+app.get("/", (req, res) => {
+  res.send("Welcome to My Deployed App");
+});
+
+app.get("/status", (req, res) => {
+  res.json({
+    status: "online",
+    message: "System is running",
+    timestamp: new Date()
+  });
+});
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "public")));
@@ -27,19 +40,6 @@ app.use("/api/auth", authRoutes);
 
 // Test route
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
-
-// Lab Challenge routes
-app.get("/", (req, res) => {
-  res.send("Welcome to My Deployed App");
-});
-
-app.get("/status", (req, res) => {
-  res.json({
-    status: "online",
-    message: "System is running",
-    timestamp: new Date()
-  });
-});
 
 // Mongo connect + start server
 async function start() {
