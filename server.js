@@ -27,8 +27,18 @@ app.use("/api/auth", authRoutes);
 
 // Test route
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+
+// Lab Challenge routes
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Welcome to My Deployed App");
+});
+
+app.get("/status", (req, res) => {
+  res.json({
+    status: "online",
+    message: "System is running",
+    timestamp: new Date()
+  });
 });
 
 // Mongo connect + start server
