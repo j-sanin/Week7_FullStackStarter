@@ -27,4 +27,11 @@ router.get('/profile', protect, (req, res) => {
   res.json({ message: 'Welcome to your profile!', user: req.user });
 });
 
+router.get('/secure-data', protect, (req, res) => {
+  res.json({ 
+    message: 'This is secured data!',
+    data: { info: 'Top secret information' }
+  });
+});
+
 module.exports = router;
