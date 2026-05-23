@@ -7,6 +7,7 @@ require("dotenv").config();
 const usersRouter = require("./routes/users");
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
+const authRoutes = require("./routes/authRoutes");  // ADD THIS
 const { setServers } = require("dns");   //added
 
 const app = express();
@@ -21,7 +22,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // API routes
 app.use("/api/users", usersRouter);
 app.use("/api/products", productRoutes);   
-app.use("/api/orders", orderRoutes);   
+app.use("/api/orders", orderRoutes); 
+app.use("/api/auth", authRoutes);  
 
 // Test route
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
