@@ -1,11 +1,21 @@
 // controllers/authController.js
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const { validationResult } = require('express-validator');
+const xss = require('xss');
 
 // REGISTER
 exports.register = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     const { name, username, email, password, confirmPassword } = req.body;
+    const sanitizedName = xss(name);
+    const sanitizedUsername = xss(username);
+    const sanitizedEmail = xss(email);
 
     // Check if passwords match
     if (password !== confirmPassword) {
@@ -19,8 +29,7 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, username, email, password: hashedPassword });
-    await user.save();
+    const user = new User({ name: sanitizedName, username: sanitizedUsername, email: sanitizedEmail, password: hashedPassword });     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
 
   } catch (error) {

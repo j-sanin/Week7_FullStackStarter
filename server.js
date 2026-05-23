@@ -2,6 +2,8 @@ require('dns').setServers(['8.8.8.8', '8.8.4.4']); //added
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require("dotenv").config();
 
 const usersRouter = require("./routes/users");
@@ -11,6 +13,16 @@ const authRoutes = require("./routes/authRoutes");
 const { setServers } = require("dns");   //added
 
 const app = express();
+
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 5,
+  message: 'Too many requests, try again later'
+});
+
+app.use('/api/auth/login', limiter);
 
 // Body parsers
 app.use(express.json());
