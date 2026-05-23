@@ -1,34 +1,39 @@
-require('dns').setServers(['8.8.8.8', '8.8.4.4']); //added
+require('dns').setServers(['8.8.8.8', '8.8.4.4']);
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { logger } = require('./middleware/logger');
 require("dotenv").config();
 
 const usersRouter = require("./routes/users");
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
 const authRoutes = require("./routes/authRoutes");
-const { setServers } = require("dns");   //added
+const { setServers } = require("dns");
 
 const app = express();
 
+// Security
 app.use(helmet());
-
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 5,
-  message: 'Too many requests, try again later'
-});
-
-app.use('/api/auth/login', limiter);
 
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Lab Challenge routes (BEFORE static files)
+// Logger (after body parsers)
+app.use(logger);
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 5,
+  message: 'Too many requests, try again later'
+});
+app.use('/api/auth/login', limiter);
+
+// Lab Challenge routes
 app.get("/", (req, res) => {
   res.send("Welcome to My Deployed App");
 });
@@ -46,11 +51,11 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // API routes
 app.use("/api/users", usersRouter);
-app.use("/api/products", productRoutes);   
-app.use("/api/orders", orderRoutes); 
-app.use("/api/auth", authRoutes);  
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/auth", authRoutes);
 
-// Test route
+// Health check
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 // Mongo connect + start server
@@ -58,7 +63,6 @@ async function start() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("MongoDB connected");
-
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   } catch (err) {
