@@ -16,7 +16,9 @@ const { setServers } = require("dns");
 const app = express();
 
 // Security
-app.use(helmet());
+//app.use(helmet({
+ // contentSecurityPolicy: false
+//}));
 
 // Body parsers
 app.use(express.json());
@@ -35,7 +37,7 @@ app.use('/api/auth/login', limiter);
 
 // Lab Challenge routes
 app.get("/", (req, res) => {
-  res.send("Welcome to My Deployed App");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 app.get("/status", (req, res) => {
